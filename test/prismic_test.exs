@@ -14,16 +14,16 @@ defmodule Prismic.Test do
       {:ok, documents} = Prismic.all()
       refute Enum.empty?(documents)
     end
-
   end
 
   describe "returns error tuple with non json repsonse" do
     setup do
       repo_url = Application.get_env(:prismic, :repo_url)
       Application.put_env(:prismic, :repo_url, "access_denied.cdn.prismic.io")
-      on_exit :reset_repo_url, fn () ->
+
+      on_exit(:reset_repo_url, fn ->
         Application.put_env(:prismic, :repo_url, repo_url)
-      end
+      end)
     end
 
     test "returns error tuple if getting error from prismic" do

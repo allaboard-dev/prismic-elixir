@@ -14,17 +14,19 @@ defmodule Prismic.API do
           bookmarks: Map.t()
         }
 
-  #TODO: this should take a token also
+  # TODO: this should take a token also
   @doc """
   Retrieve api entrypoint from a given url and authentication token
   """
-  @spec new(String.t, String.t) :: {:ok, %API{}} | {:error, any}
+  @spec new(String.t(), String.t()) :: {:ok, %API{}} | {:error, any}
   def new(json, repo_url) do
     case Poison.decode(json, as: %API{repository_url: repo_url, refs: [%Ref{}]}, keys: :atoms) do
       {:ok, %API{} = api} ->
-        api = Map.update!(api, :forms, fn form_map ->
-          for {form_name, form} <- form_map, do: {form_name, struct(Form, form)}
-        end)
+        api =
+          Map.update!(api, :forms, fn form_map ->
+            for {form_name, form} <- form_map, do: {form_name, struct(Form, form)}
+          end)
+
         {:ok, api}
 
       {:error, _error} = error ->

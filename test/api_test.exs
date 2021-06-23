@@ -4,7 +4,7 @@ defmodule Prismic.APITest do
   alias Prismic.{API, Ref}
 
   describe "new/2" do
-    #TODO: test with bypass or after http client injection ( inject fake http client)
+    # TODO: test with bypass or after http client injection ( inject fake http client)
     test "hits provided url, returns a parsed api" do
     end
 
@@ -14,6 +14,7 @@ defmodule Prismic.APITest do
 
   describe "find_ref/2" do
     import API, only: [find_ref: 2]
+
     test "finds a ref with the given label" do
       ref = %Ref{label: "bacon", ref: "egg"}
       api = %API{refs: [ref]}

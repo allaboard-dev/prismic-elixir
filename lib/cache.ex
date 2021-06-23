@@ -3,9 +3,9 @@ defmodule Prismic.Cache do
   Behavior to be implemented by injectable caches
   """
 
-  @callback get(String.t) :: any
-  @callback set(String.t, any) :: any
-  @callback get_or_store(String.t, any) :: any
+  @callback get(String.t()) :: any
+  @callback set(String.t(), any) :: any
+  @callback get_or_store(String.t(), any) :: any
 
   def cache_module do
     Application.get_env(:prismic, :cache_module) || Prismic.Cache.Default
@@ -30,10 +30,11 @@ defmodule Prismic.Cache.Default do
   defmodule Item do
     defstruct [:value, :expiration]
   end
+
   @ttl_seconds 60
 
   def start_link() do
-    Agent.start_link(fn -> Map.new end, name: __MODULE__)
+    Agent.start_link(fn -> Map.new() end, name: __MODULE__)
   end
 
   def get_or_store(key, fun) do
@@ -44,9 +45,11 @@ defmodule Prismic.Cache.Default do
         {:commit, result} ->
           set(key, result)
           result
+
         {:ignore, result} ->
-          #return function result, but don't cache failures
+          # return function result, but don't cache failures
           result
+
         result ->
           set(key, result)
           result
@@ -57,6 +60,7 @@ defmodule Prismic.Cache.Default do
   def get(key) do
     Agent.get_and_update(__MODULE__, fn map ->
       now = now()
+
       with %Item{expiration: expiration, value: value} when expiration > now <- Map.get(map, key) do
         {value, map}
       else
