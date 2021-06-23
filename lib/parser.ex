@@ -18,7 +18,7 @@ defmodule Prismic.Parser do
     |> Map.put(:first_publication_date, first_publication_date)
     |> Map.put(:last_publication_date, last_publication_date)
     |> Map.put(:alternate_languages, parse_alternate_languages(results_json))
-    |> Map.put(:fragments, data)
+    |> Map.put(:data, data)
   end
 
   def parse_response(%{results: results} = documents) do
