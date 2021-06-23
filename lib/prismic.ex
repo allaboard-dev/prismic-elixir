@@ -1,4 +1,8 @@
 defmodule Prismic do
+  @moduledoc """
+  TODO Document options
+  """
+
   require Logger
   alias Prismic.{API, Cache, Document, Predicate, SearchForm}
 
@@ -45,50 +49,49 @@ defmodule Prismic do
   end
 
   @doc """
-  Return all documents matching given query parameters.
-  This function has several clauses which generate queries from parameters
-  passed in a map. For clients who need more fine-grained control over the
-  query, there's also a clause which takes an arbitrary list of `Predicate`s.
-  """
-  @spec documents(map() | [Predicate.t()], map()) :: {:ok, [Document.t()]} | {:error, map()}
-  def documents(args, opts \\ %{})
-
-  @doc """
   Retrieve one document by its id
-  param id [String] the id to search
-  param opts [Map] query options (page, pageSize, ref, etc.)
-  return list with one or 0 documents
+
+  See moduledoc for options.
+
+  Returns `nil` or one document.
   """
-  def documents(%{id: id}, opts) do
+  def get_by_id(id, opts) do
     with {:ok, search_form} <- everything_search_form(opts) do
-      search_form
-      |> SearchForm.set_query_predicates([Predicate.at("document.id", id)])
-      |> submit_and_extract_results()
+      case search_form
+           |> SearchForm.set_query_predicates([Predicate.at("document.id", id)])
+           |> submit_and_extract_results() do
+        [doc] -> doc
+        [] -> nil
+      end
     end
   end
 
   @doc """
   Retrieve document by its uid
-  param type [String] the document type's name
-  param uid [String] the uid to search
-  param opts [Map] query options (ref, etc.)
-  return list with one or 0 documents
+
+  See moduledocs for options
+
+  Returns one document or `nil`
   """
-  def documents(%{type: type, uid: uid}, opts) do
+  def get_by_uid(type, uid, opts) do
     with {:ok, %SearchForm{} = search_form} <- everything_search_form(opts) do
-      search_form
-      |> SearchForm.set_query_predicates([Predicate.at("my." <> type <> ".uid", uid)])
-      |> submit_and_extract_results()
+      case search_form
+           |> SearchForm.set_query_predicates([Predicate.at("my." <> type <> ".uid", uid)])
+           |> submit_and_extract_results() do
+        [] -> nil
+        [doc] -> doc
+      end
     end
   end
 
   @doc """
   Retrieve multiple documents by their ids
-  @param ids [String] the ids to fetch
-  @param opts [map] query options (page, pageSize, ref, etc.)
-  @return the documents, or [] if not found
+
+  See moduledocs for options.
+
+  Returns a list of documents
   """
-  def documents(%{ids: ids}, opts) do
+  def get_by_ids(ids, opts) do
     with {:ok, search_form} <- everything_search_form(opts) do
       search_form
       |> SearchForm.set_query_predicates([Predicate.where_in("document.id", ids)])
@@ -96,7 +99,14 @@ defmodule Prismic do
     end
   end
 
-  def documents(%{tags: tags, type: type}, opts) do
+  @doc """
+  Retrive multiple documents by tags
+
+  See moduledocs for options.
+
+  Returns a list of documents with the specified tags and type.
+  """
+  def get_by_tags(type, tags, opts) do
     with {:ok, search_form} <- everything_search_form(opts) do
       search_form
       |> SearchForm.set_query_predicates([
@@ -107,48 +117,10 @@ defmodule Prismic do
     end
   end
 
-  def documents(
-        %{
-          type: type,
-          latitude: latitude,
-          longitude: longitude,
-          radius: radius,
-          location_api_id: api_id
-        },
-        opts
-      ) do
-    with {:ok, search_form} <- everything_search_form(opts) do
-      search_form
-      |> SearchForm.set_query_predicates([
-        Predicate.near("my.#{type}.#{api_id}", latitude, longitude, radius),
-        Predicate.at("document.type", type)
-      ])
-      |> submit_and_extract_results()
-    end
-  end
-
-  def documents(
-        %{
-          type: type,
-          min_value: min_value,
-          max_value: max_value,
-          min_value_field: min_value_field,
-          max_value_field: max_value_field
-        },
-        opts
-      ) do
-    with {:ok, search_form} <- everything_search_form(opts) do
-      search_form
-      |> SearchForm.set_query_predicates([
-        Predicate.lt("my.#{type}.#{min_value_field}", min_value),
-        Predicate.gt("my.#{type}.#{max_value_field}", max_value),
-        Predicate.at("document.type", type)
-      ])
-      |> submit_and_extract_results()
-    end
-  end
-
-  def documents(%{type: type}, opts) do
+  @doc """
+  Retrieve documents of a certain type
+  """
+  def get_by_type(type, opts) do
     with {:ok, search_form} <- everything_search_form(opts) do
       search_form
       |> SearchForm.set_query_predicates([Predicate.at("document.type", type)])
@@ -156,7 +128,10 @@ defmodule Prismic do
     end
   end
 
-  def documents(predicates, opts) when is_list(predicates) and predicates != [] do
+  @doc """
+  Retrieve all documents matching a list of predicates
+  """
+  def get_by_predicates(predicates, opts) when is_list(predicates) and predicates != [] do
     with {:ok, search_form} <- everything_search_form(opts) do
       search_form
       |> SearchForm.set_query_predicates(predicates)
