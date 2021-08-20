@@ -178,7 +178,7 @@ defmodule Prismic do
   defp submit_and_extract_results(%SearchForm{} = search_form) do
     case SearchForm.submit(search_form) do
       {:ok, response} ->
-        {:ok, Map.get(response, :results, [])}
+        Map.get(response, :results, [])
 
       {:error, _response} = response ->
         response
