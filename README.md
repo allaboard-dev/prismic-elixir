@@ -3,6 +3,8 @@
 This is an Elixir-based SDK for Prismic.io. Based on the [TheRealReal/prismic-elixir](https://travis-ci.org/TheRealReal/prismic-elixir), but
 forked to add support for the Prismic v2 API.
 
+**Note:** This is currently not intended to be used outside All Aboard.
+
 Mostly based on https://github.com/prismicio/ruby-kit and https://github.com/prismicio/javascript-kit
 
 - The primary authors of this library are:
