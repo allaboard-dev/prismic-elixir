@@ -11,32 +11,32 @@ defmodule Prismic.RichTextTest do
     end
 
     def prismic_data do
-      [
-        %{"type" => "paragraph", "text" => "A > B", "spans" => []},
-        %{"type" => "preformatted", "text" => "<example>\n  TEST\n</example>", "spans" => []},
+      mock = [
+        %{type: "paragraph", text: "A > B", spans: []},
+        %{type: "preformatted", text: "<example>\n  TEST\n</example>", spans: []},
         %{
-          "type" => "paragraph",
-          "text" => "This is bold and italic and both.",
-          "spans" => [
+          type: "paragraph",
+          text: "This is bold and italic and both.",
+          spans: [
             %{
-              "start" => 8,
-              "end" => 12,
-              "type" => "strong"
+              start: 8,
+              end: 12,
+              type: "strong"
             },
             %{
-              "start" => 17,
-              "end" => 23,
-              "type" => "em"
+              start: 17,
+              end: 23,
+              type: "em"
             },
             %{
-              "start" => 28,
-              "end" => 32,
-              "type" => "strong"
+              start: 28,
+              end: 32,
+              type: "strong"
             },
             %{
-              "start" => 28,
-              "end" => 32,
-              "type" => "em"
+              start: 28,
+              end: 32,
+              type: "em"
             }
           ]
         }
