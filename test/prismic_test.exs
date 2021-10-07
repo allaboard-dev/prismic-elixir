@@ -11,7 +11,7 @@ defmodule Prismic.Test do
 
   describe "all/1" do
     test "submits everything form" do
-      {:ok, documents} = Prismic.all()
+      documents = Prismic.all()
       refute Enum.empty?(documents)
     end
   end
