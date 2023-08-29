@@ -20,7 +20,7 @@ defmodule Prismic.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 1.0", optional: true},
+      {:httpoison, "~> 2.0", optional: true},
       {:poison, "~> 3.1"},
       {:hackney, "~> 1.17"}
     ]
